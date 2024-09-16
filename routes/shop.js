@@ -12,7 +12,7 @@ route.get('/cart', controllerShop.getCart)
 route.post('/cart', controllerShop.postCart)
 // route.get("/orders", controllerShop.getOrder);
 // route.get("/checkout", controllerShop.getCheckout);
-// route.post("/delete-cart-item", controllerShop.postDeleteCart);
+route.post('/delete-cart-item', controllerShop.postDeleteCart)
 // route.post("/create-order", controllerShop.postOrder);
 
 module.exports = route
