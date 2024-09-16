@@ -109,39 +109,17 @@ const postDeleteCart = (req, res, next) => {
 		})
 }
 
-// const postOrder = (req, res, next) => {
-//   let fetchedCart;
-//   req.user
-//     .getCart()
-//     .then((cart) => {
-//       fetchedCart = cart;
-//       return cart.getProducts();
-//     })
-//     .then((products) => {
-//       return req.user
-//         .createOrder()
-//         .then((order) => {
-//           return order.addProduct(
-//             products.map((product) => {
-//               product.orderItem = { quantity: product.cartItem.quantity };
-//               return product;
-//             })
-//           );
-//         })
-//         .then((result) => {
-//           fetchedCart.setProducts(null);
-//         })
-//         .then((result) => {
-//           res.redirect("/orders");
-//         })
-//         .catch((err) => {
-//           console.error(err);
-//         });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//     });
-// };
+const postOrder = (req, res, next) => {
+	let fetchedCart
+	req.user
+		.addOrder()
+		.then((result) => {
+			res.redirect('/orders')
+		})
+		.catch((err) => {
+			console.error(err)
+		})
+}
 
 module.exports = {
 	getProducts,
@@ -152,5 +130,5 @@ module.exports = {
 	// getOrder,
 	// getCheckout,
 	postDeleteCart,
-	// postOrder,
+	postOrder,
 }
