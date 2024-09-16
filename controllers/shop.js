@@ -42,29 +42,21 @@ const getIndex = (req, res, next) => {
 		.catch((err) => console.error(err))
 }
 
-// const getCart = (req, res, next) => {
-//   req.user
-//     .getCart()
-//     .then((cart) => {
-//       return cart
-//         .getProducts()
-//         .then((products) => {
-//           console.log(products);
-//           res.render("shop/cart", {
-//             pageTitle: "Cart",
-//             path: "/cart",
-//             layout: "main-layout",
-//             products: products,
-//           });
-//         })
-//         .catch((err) => {
-//           console.error(err);
-//         });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//     });
-// };
+const getCart = (req, res, next) => {
+	req.user
+		.getCart()
+		.then((products) => {
+			res.render('shop/cart', {
+				pageTitle: 'Cart',
+				path: '/cart',
+				layout: 'main-layout',
+				products: products,
+			})
+		})
+		.catch((err) => {
+			console.error(err)
+		})
+}
 
 const postCart = (req, res, next) => {
 	const prodID = req.body.productId
@@ -74,6 +66,7 @@ const postCart = (req, res, next) => {
 		})
 		.then((result) => {
 			console.log('Result is ', result)
+			res.redirect('/cart')
 		})
 	// let fetchedCart;
 	// let newQuantity = 1;
@@ -193,7 +186,7 @@ module.exports = {
 	getProducts,
 	getProduct,
 	getIndex,
-	// getCart,
+	getCart,
 	postCart,
 	// getOrder,
 	// getCheckout,
