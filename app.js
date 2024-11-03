@@ -37,7 +37,7 @@ app.use((req, res, next) => {
 	User.findById('66cb58293958073bfc7807da')
 		.then((user) => {
 			const { name, email, cart, _id } = user
-			console.log('data user la ', user)
+
 			req.user = new User(name, email, cart, _id)
 			next()
 		})

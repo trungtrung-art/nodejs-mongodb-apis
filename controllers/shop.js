@@ -70,21 +70,22 @@ const postCart = (req, res, next) => {
 		})
 }
 
-// const getOrder = (req, res, next) => {
-//   req.user
-//     .getOrders({ include: ["products"] })
-//     .then((orders) => {
-//       res.render("shop/orders", {
-//         pageTitle: "Order",
-//         path: "/orders",
-//         layout: "main-layout",
-//         orders: orders,
-//       });
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//     });
-// };
+const getOrders = (req, res, next) => {
+	req.user
+		.getOrders()
+		.then((orders) => {
+			console.log(orders)
+			res.render('shop/orders', {
+				pageTitle: 'Order',
+				path: '/orders',
+				layout: 'main-layout',
+				orders: orders,
+			})
+		})
+		.catch((err) => {
+			console.error(err)
+		})
+}
 
 // const getCheckout = (req, res, next) => {
 //   Product.fetchAll((products) => {
@@ -127,7 +128,7 @@ module.exports = {
 	getIndex,
 	getCart,
 	postCart,
-	// getOrder,
+	getOrders,
 	// getCheckout,
 	postDeleteCart,
 	postOrder,
