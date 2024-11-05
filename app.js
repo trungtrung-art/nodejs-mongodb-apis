@@ -6,12 +6,14 @@ const rootDir = require('./utils/path')
 
 const bodyParser = require('body-parser')
 
+const mongoose = require('mongoose')
+
 const routesAdmin = require('./routes/admin')
 const routesShop = require('./routes/shop')
 
 const errorControllers = require('./controllers/error')
 
-const mongoConnect = require('./utils/database').mongoConnect
+// const mongoConnect = require('./utils/database').mongoConnect
 
 const User = require('./models/user.js')
 
@@ -53,6 +55,16 @@ app.use(routesShop)
 
 app.use(errorControllers.get404)
 
-mongoConnect(() => {
-	app.listen('3000')
-})
+// mongoConnect(() => {
+// 	app.listen('3000')
+// })
+mongoose
+	.connect(
+		'mongodb+srv://root:AnIy6PdQAhO7EIlB@test-mongo.qze0oxd.mongodb.net/?retryWrites=true&w=majority&appName=test-mongo',
+	)
+	.then((result) => {
+		app.listen(3000)
+	})
+	.catch((err) => {
+		console.error(err)
+	})
