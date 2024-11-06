@@ -15,7 +15,7 @@ const errorControllers = require('./controllers/error')
 
 // const mongoConnect = require('./utils/database').mongoConnect
 
-const User = require('./models/user.js')
+// const User = require('./models/user.js')
 
 const app = express()
 
@@ -35,18 +35,18 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // expressjs là môi trường của nhà phát triển nó sẽ không cho phép người dùng truy cập vào các file trừ khi có sự cho phép ở đây chúng ta sẽ dùng static file của express
 app.use(express.static(path.join(rootDir, 'public')))
 
-app.use((req, res, next) => {
-	User.findById('66cb58293958073bfc7807da')
-		.then((user) => {
-			const { name, email, cart, _id } = user
+// app.use((req, res, next) => {
+// 	User.findById('66cb58293958073bfc7807da')
+// 		.then((user) => {
+// 			const { name, email, cart, _id } = user
 
-			req.user = new User(name, email, cart, _id)
-			next()
-		})
-		.catch((err) => {
-			console.error(err)
-		})
-})
+// 			req.user = new User(name, email, cart, _id)
+// 			next()
+// 		})
+// 		.catch((err) => {
+// 			console.error(err)
+// 		})
+// })
 
 // START: setup middleware
 app.use('/admin', routesAdmin)
@@ -60,7 +60,7 @@ app.use(errorControllers.get404)
 // })
 mongoose
 	.connect(
-		'mongodb+srv://root:AnIy6PdQAhO7EIlB@test-mongo.qze0oxd.mongodb.net/?retryWrites=true&w=majority&appName=test-mongo',
+		'mongodb+srv://root:AnIy6PdQAhO7EIlB@test-mongo.qze0oxd.mongodb.net/shop?retryWrites=true&w=majority&appName=test-mongo',
 	)
 	.then((result) => {
 		app.listen(3000)
