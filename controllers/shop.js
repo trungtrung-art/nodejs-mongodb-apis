@@ -3,7 +3,7 @@ const Product = require('../models/product')
 // const Order = require("../models/order");
 
 const getProducts = (req, res, next) => {
-	Product.fetchAll()
+	Product.find()
 		.then((products) => {
 			res.render('shop/product-list', {
 				prods: products,
@@ -30,7 +30,7 @@ const getProduct = (req, res, next) => {
 }
 
 const getIndex = (req, res, next) => {
-	Product.fetchAll()
+	Product.find()
 		.then((products) => {
 			res.render('shop/index', {
 				prods: products,
