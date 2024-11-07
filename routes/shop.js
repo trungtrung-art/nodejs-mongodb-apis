@@ -4,7 +4,7 @@ const controllerShop = require('../controllers/shop')
 
 const route = express.Router()
 
-// route.get('/', controllerShop.getIndex)
+route.get('/', controllerShop.getIndex)
 
 route.get('/products', controllerShop.getProducts)
 route.get('/products/:productId', controllerShop.getProduct)

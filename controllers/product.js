@@ -44,16 +44,20 @@ const postEditProduct = (req, res, next) => {
 	const updatedDes = req.body.des
 	const prodId = req.body.productId
 
-	const product = new Product(
-		updatedTitle,
-		updatedImageUrl,
-		updatedDes,
-		updatedPrice,
-		new mongodb.ObjectId(prodId),
+	const product = {
+		title: updatedTitle,
+		imageUrl: updatedImageUrl,
+		description: updatedDes,
+		price: updatedPrice,
+		_id: prodId,
+	}
+
+	Product.findOneAndUpdate(
+		{ _id: prodId }, // findBy _id
+		{ $set: product }, // Data need to update
+		{ new: true },
 	)
-	product
-		.save()
-		.then((result) => {
+		.then((product) => {
 			res.redirect('/admin/products')
 		})
 		.catch((err) => {
@@ -106,7 +110,7 @@ const getProducts = (req, res, next) => {
 
 const postDeleteProduct = (req, res, next) => {
 	const prodId = req.body.productId
-	Product.deleteById(prodId)
+	Product.deleteOne({ _id: prodId })
 		.then((result) => {
 			res.redirect('/admin/products')
 		})
