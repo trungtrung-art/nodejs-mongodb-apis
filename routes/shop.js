@@ -7,7 +7,7 @@ const route = express.Router()
 // route.get('/', controllerShop.getIndex)
 
 route.get('/products', controllerShop.getProducts)
-// route.get('/products/:productId', controllerShop.getProduct)
+route.get('/products/:productId', controllerShop.getProduct)
 // route.get('/cart', controllerShop.getCart)
 // route.post('/cart', controllerShop.postCart)
 // route.get('/orders', controllerShop.getOrders)

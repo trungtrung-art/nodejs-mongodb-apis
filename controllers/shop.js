@@ -5,6 +5,7 @@ const Product = require('../models/product')
 const getProducts = (req, res, next) => {
 	Product.find()
 		.then((products) => {
+			console.log(products)
 			res.render('shop/product-list', {
 				prods: products,
 				pageTitle: 'Product',
@@ -17,8 +18,10 @@ const getProducts = (req, res, next) => {
 
 const getProduct = (req, res, next) => {
 	const prodID = req.params.productId
+	console.log(prodID)
 	Product.findById(prodID)
 		.then((product) => {
+			console.log(product)
 			res.render('shop/product-detail', {
 				product: product,
 				pageTitle: `Product detail ${prodID}`,
