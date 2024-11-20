@@ -28,6 +28,7 @@ const postAddProduct = (req, res, next) => {
 		price: price,
 		description: des,
 		imageUrl: imageUrl,
+		userId: req.user._id,
 	})
 	product
 		.save()
