@@ -1,37 +1,38 @@
 <%- include('../includes/head.ejs')%>
     <link rel="stylesheet" href="/css/product.css" />
-  </head>
+    </head>
 
-  <body>
-    <%- include('../includes/navigation.ejs')%>
-    <main>
-      <% if (products.length > 0) { %>
-        <ul>
-          <% products.forEach(p => {%>
-            <li>
-              <div>
-                <%= p.title %> (<%= p.quantity%>)
-                <form action="/delete-cart-item" method="POST">
-                  <input type="hidden" value="<%= p._id %>" name="productId">
-                  <button type="submit" class="btn">
+    <body>
+        <%- include('../includes/navigation.ejs')%>
+            <main>
+                <% if (products.length > 0) { %>
+                    <ul>
+                        <% products.forEach(p => {%>
+                            <li>
+                                <div>
+                                    <%= p.title %> (
+                                        <%= p.quantity%>)
+                                            <form action="/delete-cart-item" method="POST">
+                                                <input type="hidden" value="<%= p.productId._id %>" name="productId">
+                                                <button type="submit" class="btn">
                     DELETE
                   </button>
-                </form>
-              </div>
-              
-            </li>
-          <% }) %>
-        </ul>
-        <hr>
-        <div class="centered">
-          <form action="/create-order" method="POST">
-            <button type="submit" class="btn">Order Now!!!</button>
-          </form>
-        </div>
-        
-      <% } else { %>
-        <h1>khong co du lieu</h1>
-      <% } %>
-    </main>
-    
-  <%- include('../includes/end.ejs')%>
+                                            </form>
+                                </div>
+
+                            </li>
+                            <% }) %>
+                    </ul>
+                    <hr>
+                    <div class="centered">
+                        <form action="/create-order" method="POST">
+                            <button type="submit" class="btn">Order Now!!!</button>
+                        </form>
+                    </div>
+
+                    <% } else { %>
+                        <h1>khong co du lieu</h1>
+                        <% } %>
+            </main>
+
+            <%- include('../includes/end.ejs')%>

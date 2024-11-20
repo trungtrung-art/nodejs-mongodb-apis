@@ -2,58 +2,67 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
-	name: {
-		type: String,
-		required: true,
-	},
-	email: {
-		type: String,
-		required: true,
-	},
-	cart: {
-		items: [
-			{
-				productId: {
-					type: Schema.Types.ObjectId,
-					ref: 'Product',
-					required: true,
-				},
-				quantity: {
-					type: Number,
-					required: true,
-				},
-			},
-		],
-	},
+    name: {
+        type: String,
+        required: true,
+    },
+    email: {
+        type: String,
+        required: true,
+    },
+    cart: {
+        items: [{
+            productId: {
+                type: Schema.Types.ObjectId,
+                ref: 'Product',
+                required: true,
+            },
+            quantity: {
+                type: Number,
+                required: true,
+            },
+        }, ],
+    },
 })
 
-userSchema.methods.addToCart = function (product) {
-	const cartProductIndex = this.cart.items.findIndex((cp) => {
-		return cp.productId.toString() === product._id.toString()
-	})
+userSchema.methods.addToCart = function(product) {
+    const cartProductIndex = this.cart.items.findIndex((cp) => {
+        return cp.productId.toString() === product._id.toString()
+    })
 
-	let newQuantity = 1
-	let updatedCardItems = [...this.cart.items]
-	if (cartProductIndex >= 0) {
-		newQuantity = this.cart.items[cartProductIndex].quantity + 1
-		updatedCardItems[cartProductIndex].quantity = newQuantity
-	} else {
-		updatedCardItems.push({
-			productId: product._id,
-			quantity: newQuantity,
-		})
-	}
-	const updatedCart = {
-		items: updatedCardItems,
-	}
+    let newQuantity = 1
+    let updatedCardItems = [...this.cart.items]
+    if (cartProductIndex >= 0) {
+        newQuantity = this.cart.items[cartProductIndex].quantity + 1
+        updatedCardItems[cartProductIndex].quantity = newQuantity
+    } else {
+        updatedCardItems.push({
+            productId: product._id,
+            quantity: newQuantity,
+        })
+    }
+    const updatedCart = {
+        items: updatedCardItems,
+    }
 
-	this.cart = updatedCart
-	return this.save()
+    this.cart = updatedCart
+    return this.save()
+}
+
+userSchema.methods.deleteItemFormCart = function(productId) {
+    console.log('chay vao ham nay', productId)
+    const updatedCartItems = this.cart.items.filter((item) => {
+        console.log(item)
+        return item.productId.toString() !== productId.toString()
+    })
+    console.log(updatedCartItems)
+    this.cart.items = updatedCartItems
+    return this.save()
 }
 
 module.exports = mongoose.model('User', userSchema)
-// const { mongodb, ObjectId } = require('mongodb')
-// const { getDb } = require('../utils/database')
+    // const { mongodb, ObjectId } = require('mongodb')
+    // const { getDb } = require('../utils/database')
 
 // class User {
 // 	constructor(username, email, cart, id) {
