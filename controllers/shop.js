@@ -120,7 +120,7 @@ const postOrder = (req, res, next) => {
         .then((user) => {
             console.log('User after populate:', user.cart.items) // Kiểm tra dữ liệu user sau khi populate
             const products = user.cart.items.map((i) => {
-                return { quantity: i.quantity, product: i.productId }
+                return { quantity: i.quantity, product: {...i.productId._doc } }
             })
             console.log(products)
             const order = new Order({
