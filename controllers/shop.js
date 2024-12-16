@@ -76,10 +76,8 @@ const postCart = (req, res, next) => {
 }
 
 const getOrders = (req, res, next) => {
-    req.user
-        .getOrders()
+    Order.find({ 'user.userId': req.user._id })
         .then((orders) => {
-            console.log(orders)
             res.render('shop/orders', {
                 pageTitle: 'Order',
                 path: '/orders',
