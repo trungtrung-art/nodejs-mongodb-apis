@@ -15,11 +15,21 @@ const routesShop = require('./routes/shop')
 const routesAuth = require('./routes/auth')
 const errorControllers = require('./controllers/error')
 
+const MongoDBStore = require('connect-mongodb-session')(session)
+
 // const mongoConnect = require('./utils/database').mongoConnect
 
 const User = require('./models/user.js')
 
+const MONGODB_URI =
+	'mongodb+srv://root:AnIy6PdQAhO7EIlB@test-mongo.qze0oxd.mongodb.net/shop?w=majority&appName=test-mongo'
+
 const app = express()
+
+const store = new MongoDBStore({
+	uri: MONGODB_URI,
+	collection: 'sessions',
+})
 
 // app.engine(
 //   "hbs",
@@ -37,7 +47,12 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // expressjs là môi trường của nhà phát triển nó sẽ không cho phép người dùng truy cập vào các file trừ khi có sự cho phép ở đây chúng ta sẽ dùng static file của express
 app.use(express.static(path.join(rootDir, 'public')))
 app.use(
-	session({ secret: 'my secret', resave: false, saveUninitialized: false }),
+	session({
+		secret: 'my secret',
+		resave: false,
+		saveUninitialized: false,
+		store: store,
+	}),
 )
 
 app.use((req, res, next) => {
@@ -65,9 +80,7 @@ app.use(errorControllers.get404)
 // 	app.listen('3000')
 // })
 mongoose
-	.connect(
-		'mongodb+srv://root:AnIy6PdQAhO7EIlB@test-mongo.qze0oxd.mongodb.net/shop?retryWrites=true&w=majority&appName=test-mongo',
-	)
+	.connect(MONGODB_URI)
 	.then((result) => {
 		User.findById('673aae95a7d4df2fe7f4bf00').then((user) => {
 			if (!user) {
