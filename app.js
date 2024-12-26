@@ -36,7 +36,9 @@ app.set('views', 'views')
 app.use(bodyParser.urlencoded({ extended: false }))
 // expressjs là môi trường của nhà phát triển nó sẽ không cho phép người dùng truy cập vào các file trừ khi có sự cho phép ở đây chúng ta sẽ dùng static file của express
 app.use(express.static(path.join(rootDir, 'public')))
-app.use({ session: 'my secret', resave: false, saveUninitialized: false })
+app.use(
+	session({ secret: 'my secret', resave: false, saveUninitialized: false }),
+)
 
 app.use((req, res, next) => {
 	User.findById('673aae95a7d4df2fe7f4bf00')
