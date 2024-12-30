@@ -22,13 +22,13 @@ const MongoDBStore = require('connect-mongodb-session')(session)
 const User = require('./models/user.js')
 
 const MONGODB_URI =
-	'mongodb+srv://root:AnIy6PdQAhO7EIlB@test-mongo.qze0oxd.mongodb.net/shop?w=majority&appName=test-mongo'
+    'mongodb+srv://root:AnIy6PdQAhO7EIlB@test-mongo.qze0oxd.mongodb.net/shop?w=majority&appName=test-mongo'
 
 const app = express()
 
 const store = new MongoDBStore({
-	uri: MONGODB_URI,
-	collection: 'sessions',
+    uri: MONGODB_URI,
+    collection: 'sessions',
 })
 
 // app.engine(
@@ -44,35 +44,37 @@ app.set('view engine', 'ejs')
 app.set('views', 'views')
 
 app.use(bodyParser.urlencoded({ extended: false }))
-// expressjs là môi trường của nhà phát triển nó sẽ không cho phép người dùng truy cập vào các file trừ khi có sự cho phép ở đây chúng ta sẽ dùng static file của express
+    // expressjs là môi trường của nhà phát triển nó sẽ không cho phép người dùng truy cập vào các file trừ khi có sự cho phép ở đây chúng ta sẽ dùng static file của express
 app.use(express.static(path.join(rootDir, 'public')))
 app.use(
-	session({
-		secret: 'my secret',
-		resave: false,
-		saveUninitialized: false,
-		store: store,
-	}),
+    session({
+        secret: 'my secret',
+        resave: false,
+        saveUninitialized: false,
+        store: store,
+    }),
 )
 
 app.use((req, res, next) => {
-	User.findById('673aae95a7d4df2fe7f4bf00')
-		.then((user) => {
-			const { name, email, cart, _id } = user
+    if (!req.session.user) {
+        return next()
+    }
+    User.findById(req.session.user._id)
+        .then((user) => {
+            req.user = user
 
-			req.user = user
-			next()
-		})
-		.catch((err) => {
-			console.error(err)
-		})
+            next()
+        })
+        .catch((err) => {
+            console.error(err)
+        })
 })
 
 // START: setup middleware
 app.use('/admin', routesAdmin)
 app.use(routesShop)
 app.use(routesAuth)
-// END: setup middleware
+    // END: setup middleware
 
 app.use(errorControllers.get404)
 
@@ -80,23 +82,23 @@ app.use(errorControllers.get404)
 // 	app.listen('3000')
 // })
 mongoose
-	.connect(MONGODB_URI)
-	.then((result) => {
-		User.findById('673aae95a7d4df2fe7f4bf00').then((user) => {
-			if (!user) {
-				const user = new User({
-					name: 'Trung',
-					email: 'tt2861997@gmail.com',
-					cart: {
-						items: [],
-					},
-				})
-				user.save()
-			}
-		})
+    .connect(MONGODB_URI)
+    .then((result) => {
+        User.findById('673aae95a7d4df2fe7f4bf00').then((user) => {
+            if (!user) {
+                const user = new User({
+                    name: 'Trung',
+                    email: 'tt2861997@gmail.com',
+                    cart: {
+                        items: [],
+                    },
+                })
+                user.save()
+            }
+        })
 
-		app.listen(3000)
-	})
-	.catch((err) => {
-		console.error(err)
-	})
+        app.listen(3000)
+    })
+    .catch((err) => {
+        console.error(err)
+    })
