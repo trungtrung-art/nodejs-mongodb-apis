@@ -84,19 +84,6 @@ app.use(errorControllers.get404)
 mongoose
     .connect(MONGODB_URI)
     .then((result) => {
-        User.findById('673aae95a7d4df2fe7f4bf00').then((user) => {
-            if (!user) {
-                const user = new User({
-                    name: 'Trung',
-                    email: 'tt2861997@gmail.com',
-                    cart: {
-                        items: [],
-                    },
-                })
-                user.save()
-            }
-        })
-
         app.listen(3000)
     })
     .catch((err) => {
