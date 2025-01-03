@@ -12,7 +12,7 @@ const getAddProductPage = (req, res, next) => {
         activeProduct: true,
         activeShop: false,
         layout: 'main-layout',
-        isAuthenticated: req.isLoggedIn,
+        isAuthenticated: req.session.isLoggedIn,
     })
 }
 
@@ -87,7 +87,7 @@ const getEditProductPage = (req, res, next) => {
                 activeShop: false,
                 layout: 'main-layout',
                 product: product,
-                isAuthenticated: req.isLoggedIn,
+                isAuthenticated: req.session.isLoggedIn,
             })
         })
         .catch((err) => {
@@ -103,7 +103,7 @@ const getProducts = (req, res, next) => {
                 pageTitle: 'Admin Product',
                 path: '/admin/products',
                 layout: 'main-layout',
-                isAuthenticated: req.isLoggedIn,
+                isAuthenticated: req.session.isLoggedIn,
             })
         })
         .catch((err) => {
