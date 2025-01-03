@@ -16,6 +16,7 @@ const routesAuth = require('./routes/auth')
 const errorControllers = require('./controllers/error')
 
 const MongoDBStore = require('connect-mongodb-session')(session)
+const csrf = require('csurf')
 
 // const mongoConnect = require('./utils/database').mongoConnect
 
@@ -30,6 +31,7 @@ const store = new MongoDBStore({
     uri: MONGODB_URI,
     collection: 'sessions',
 })
+const csrfProtection = csrf()
 
 // app.engine(
 //   "hbs",
@@ -54,6 +56,7 @@ app.use(
         store: store,
     }),
 )
+app.use(csrfProtection)
 
 app.use((req, res, next) => {
     if (!req.session.user) {

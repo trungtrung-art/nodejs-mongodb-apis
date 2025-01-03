@@ -43,6 +43,7 @@ const getIndex = (req, res, next) => {
                 path: '/',
                 layout: 'main-layout',
                 isAuthenticated: req.session.isLoggedIn,
+                csrfToken: req.csrfToken(),
             })
         })
         .catch((err) => console.error(err))
