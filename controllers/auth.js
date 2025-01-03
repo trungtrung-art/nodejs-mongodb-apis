@@ -7,7 +7,7 @@ exports.getLogin = (req, res, next) => {
         pageTitle: 'Login',
         path: '/login',
         layout: 'main-layout',
-        isAuthenticated: false,
+        errorMessage: req.flash('error'),
     })
 }
 
@@ -17,6 +17,7 @@ exports.postLogin = (req, res, next) => {
     User.findOne({ email: email })
         .then((user) => {
             if (!user) {
+                req.flash('error', 'Invalid email or password.')
                 return res.redirect('/login')
             }
             bcrypt
@@ -54,7 +55,6 @@ exports.getSignup = (req, res, next) => {
         path: '/signup',
         pageTitle: 'Signup',
         layout: 'main-layout',
-        isAuthenticated: false,
     })
 }
 

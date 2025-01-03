@@ -11,7 +11,6 @@ const getProducts = (req, res, next) => {
                 pageTitle: 'Product',
                 path: '/products',
                 layout: 'main-layout',
-                isAuthenticated: req.session.isLoggedIn,
             })
         })
         .catch((err) => console.error(err))
@@ -28,7 +27,6 @@ const getProduct = (req, res, next) => {
                 pageTitle: `Product detail ${prodID}`,
                 path: '/products',
                 layout: 'main-layout',
-                isAuthenticated: req.session.isLoggedIn,
             })
         })
         .catch((err) => console.error(err))
@@ -42,7 +40,7 @@ const getIndex = (req, res, next) => {
                 pageTitle: 'Shop',
                 path: '/',
                 layout: 'main-layout',
-                isAuthenticated: req.session.isLoggedIn,
+
                 csrfToken: req.csrfToken(),
             })
         })
@@ -60,7 +58,6 @@ const getCart = (req, res, next) => {
                 path: '/cart',
                 layout: 'main-layout',
                 products: products,
-                isAuthenticated: req.session.isLoggedIn,
             })
         })
         .catch((err) => {
@@ -88,7 +85,6 @@ const getOrders = (req, res, next) => {
                 path: '/orders',
                 layout: 'main-layout',
                 orders: orders,
-                isAuthenticated: req.session.isLoggedIn,
             })
         })
         .catch((err) => {
