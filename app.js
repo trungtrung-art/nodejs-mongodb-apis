@@ -73,6 +73,12 @@ app.use((req, res, next) => {
         })
 })
 
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn
+    res.locals.csrfToken = req.csrfToken()
+    next()
+})
+
 // START: setup middleware
 app.use('/admin', routesAdmin)
 app.use(routesShop)

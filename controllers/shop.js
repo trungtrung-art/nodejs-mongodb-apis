@@ -129,7 +129,7 @@ const postOrder = (req, res, next) => {
             console.log(products)
             const order = new Order({
                 user: {
-                    name: req.user.name,
+                    email: req.user.email,
                     userId: req.user,
                 },
                 products: products,
