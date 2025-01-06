@@ -1,13 +1,25 @@
 const bcryptjs = require('bcryptjs')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs/dist/bcrypt')
+const nodemailer = require('nodemailer')
+const sendgridTransport = require('nodemailer-sendgrid-transport')
+
+const transporter = nodemailer.createTransport(
+    sendgridTransport({
+        auth: {},
+    }),
+)
 
 exports.getLogin = (req, res, next) => {
+    let message = req.flash('error')
+    if (message.length === 0) {
+        message = null
+    }
     res.render('auth/login', {
         pageTitle: 'Login',
         path: '/login',
         layout: 'main-layout',
-        errorMessage: req.flash('error'),
+        errorMessage: message,
     })
 }
 
@@ -51,10 +63,15 @@ exports.postLogout = (req, res, next) => {
 }
 
 exports.getSignup = (req, res, next) => {
+    let message = req.flash('error')
+    if (message.length === 0) {
+        message = null
+    }
     res.render('auth/signup', {
         path: '/signup',
         pageTitle: 'Signup',
         layout: 'main-layout',
+        errorMessage: message,
     })
 }
 
@@ -65,6 +82,7 @@ exports.postSignup = (req, res, next) => {
     User.findOne({ email: email })
         .then((userDoc) => {
             if (userDoc) {
+                req.flash('error', 'Email already exists.')
                 return res.redirect('/signup')
             }
             return bcryptjs
@@ -79,6 +97,12 @@ exports.postSignup = (req, res, next) => {
                 })
                 .then((result) => {
                     res.redirect('/login')
+                    return transporter.sendMail({
+                        to: email,
+                        from: 'shop@node-complete.com',
+                        subject: 'Signup succeeded!',
+                        html: '<h1>You successfully signed up!</h1>',
+                    })
                 })
         })
 
