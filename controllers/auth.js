@@ -98,7 +98,7 @@ exports.postSignup = (req, res, next) => {
                 })
                 .then((result) => {
                     res.redirect('/login')
-                    return transporter.sendMail({
+                    return transporter.send({
                         to: email,
                         from: 'shop@node-complete.com',
                         subject: 'Signup succeeded!',
@@ -144,7 +144,7 @@ exports.postReset = (req, res, next) => {
             })
             .then((result) => {
                 res.redirect('/')
-                transporter.sendMail({
+                transporter.send({
                     to: req.body.email,
                     from: 'shop@node-complete.com',
                     subject: 'Password reset',
@@ -158,4 +158,26 @@ exports.postReset = (req, res, next) => {
                 console.log(err)
             })
     })
+}
+
+exports.getNewPassword = (req, res, next) => {
+    const token = req.params.token
+
+    User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+        .then((user) => {
+            let message = req.flash('error')
+            if (message.length === 0) {
+                message = null
+            }
+            res.render('auth/new-password', {
+                pageTitle: 'New Password',
+                path: '/new-password',
+                layout: 'main-layout',
+                errorMessage: message,
+                userId: user._id.toString(),
+            })
+        })
+        .catch((err) => {
+            console.log(err)
+        })
 }
