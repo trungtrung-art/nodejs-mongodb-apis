@@ -1,13 +1,17 @@
 const bcryptjs = require('bcryptjs')
 const User = require('../models/user')
 const bcrypt = require('bcryptjs/dist/bcrypt')
-
+const { validationResult } = require('express-validator')
 const nodemailer = require('nodemailer')
 const sendgridTransport = require('nodemailer-sendgrid-transport')
 const crypto = require('crypto')
+require('dotenv').config()
+
 const transporter = nodemailer.createTransport(
     sendgridTransport({
-        auth: {},
+        auth: {
+            api_key: process.env.API_SENDMAIL,
+        },
     }),
 )
 
@@ -80,6 +84,16 @@ exports.postSignup = (req, res, next) => {
     const email = req.body.email
     const password = req.body.password
     const confirmPassword = req.body.confirmPassword
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        console.log(errors.array())
+        return res.status(422).render('auth/signup', {
+            path: '/signup',
+            pageTitle: 'Signup',
+            layout: 'main-layout',
+            errorMessage: errors.array(),
+        })
+    }
     User.findOne({ email: email })
         .then((userDoc) => {
             if (userDoc) {
@@ -98,7 +112,7 @@ exports.postSignup = (req, res, next) => {
                 })
                 .then((result) => {
                     res.redirect('/login')
-                    return transporter.send({
+                    return transporter.sendMail({
                         to: email,
                         from: 'shop@node-complete.com',
                         subject: 'Signup succeeded!',
@@ -144,7 +158,7 @@ exports.postReset = (req, res, next) => {
             })
             .then((result) => {
                 res.redirect('/')
-                transporter.send({
+                transporter.sendMail({
                     to: req.body.email,
                     from: 'shop@node-complete.com',
                     subject: 'Password reset',
@@ -175,7 +189,36 @@ exports.getNewPassword = (req, res, next) => {
                 layout: 'main-layout',
                 errorMessage: message,
                 userId: user._id.toString(),
+                passwordToken: token,
             })
+        })
+        .catch((err) => {
+            console.log(err)
+        })
+}
+
+exports.postNewPassword = (req, res, next) => {
+    const newPassword = req.body.password
+    const userId = req.body.userId
+    const passwordToken = req.body.passwordToken
+    let resetUser
+    User.findOne({
+            resetToken: passwordToken,
+            resetTokenExpiration: { $gt: Date.now() },
+            _id: userId,
+        })
+        .then((user) => {
+            resetUser = user
+            return bcrypt.hash(newPassword, 12)
+        })
+        .then((hashedPassword) => {
+            resetUser.password = hashedPassword
+            resetUser.resetToken = undefined
+            resetUser.resetTokenExpiration = undefined
+            return resetUser.save()
+        })
+        .then((result) => {
+            res.redirect('/login')
         })
         .catch((err) => {
             console.log(err)
