@@ -1,6 +1,7 @@
 const path = require('path')
 const express = require('express')
 const rootDir = require('../utils/path')
+const { check, body } = require('express-validator')
 const controllerProduct = require('../controllers/product')
 const isAuth = require('../middleware/is-auth')
 
@@ -13,7 +14,16 @@ route.get('/add-product', isAuth, controllerProduct.getAddProductPage)
 route.get('/products', isAuth, controllerProduct.getProducts)
 
 // // admin/add-product POST
-route.post('/add-product', isAuth, controllerProduct.postAddProduct)
+route.post(
+    '/add-product', [
+        body('title').isString().isLength({ min: 3 }).trim(),
+        body('imageUrl').isURL(),
+        body('price').isFloat(),
+        body('des').isLength({ min: 5, max: 400 }).trim(),
+    ],
+    isAuth,
+    controllerProduct.postAddProduct,
+)
 
 route.get(
     '/edit-product/:productId',
@@ -21,7 +31,16 @@ route.get(
     controllerProduct.getEditProductPage,
 )
 
-route.post('/edit-product', isAuth, controllerProduct.postEditProduct)
+route.post(
+    '/edit-product', [
+        body('title').isString().isLength({ min: 3 }).trim(),
+        body('imageUrl').isURL(),
+        body('price').isFloat(),
+        body('des').isLength({ min: 5, max: 400 }).trim(),
+    ],
+    isAuth,
+    controllerProduct.postEditProduct,
+)
 
 route.post('/delete-product', isAuth, controllerProduct.postDeleteProduct)
 
