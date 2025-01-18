@@ -18,6 +18,7 @@ const errorControllers = require('./controllers/error')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const csrf = require('csurf')
 const flash = require('connect-flash')
+const multer = require('multer')
 
 // const mongoConnect = require('./utils/database').mongoConnect
 
@@ -34,6 +35,15 @@ const store = new MongoDBStore({
 })
 const csrfProtection = csrf()
 
+const fileStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'images')
+    },
+    filename: (req, file, cb) => {
+        cb(null, new Date().toISOString() + '-' + file.originalname)
+    },
+})
+
 // app.engine(
 //   "hbs",
 //   expressHbs({
@@ -47,6 +57,7 @@ app.set('view engine', 'ejs')
 app.set('views', 'views')
 
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(multer({ storage: fileStorage }).single('image'))
     // expressjs là môi trường của nhà phát triển nó sẽ không cho phép người dùng truy cập vào các file trừ khi có sự cho phép ở đây chúng ta sẽ dùng static file của express
 app.use(express.static(path.join(rootDir, 'public')))
 app.use(
@@ -61,24 +72,27 @@ app.use(csrfProtection)
 app.use(flash())
 
 app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn
+    res.locals.csrfToken = req.csrfToken()
+    next()
+})
+
+app.use((req, res, next) => {
     if (!req.session.user) {
         return next()
     }
     User.findById(req.session.user._id)
         .then((user) => {
+            if (!user) {
+                return next()
+            }
             req.user = user
 
             next()
         })
         .catch((err) => {
-            console.error(err)
+            next(new Error(err))
         })
-})
-
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn
-    res.locals.csrfToken = req.csrfToken()
-    next()
 })
 
 // START: setup middleware
@@ -87,7 +101,17 @@ app.use(routesShop)
 app.use(routesAuth)
     // END: setup middleware
 
+app.get('/500', errorControllers.get500)
+
 app.use(errorControllers.get404)
+
+app.use((error, req, res, next) => {
+    res.status(500).render('500', {
+        pageTitle: 'Error!',
+        path: '/500',
+        isAuthenticated: req.session.isLoggedIn,
+    })
+})
 
 // mongoConnect(() => {
 // 	app.listen('3000')

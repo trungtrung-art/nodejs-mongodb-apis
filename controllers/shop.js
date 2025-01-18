@@ -61,7 +61,9 @@ const getCart = (req, res, next) => {
             })
         })
         .catch((err) => {
-            console.error(err)
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
         })
 }
 
@@ -88,7 +90,9 @@ const getOrders = (req, res, next) => {
             })
         })
         .catch((err) => {
-            console.error(err)
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
         })
 }
 
@@ -110,7 +114,9 @@ const postDeleteCart = (req, res, next) => {
             res.redirect('/cart')
         })
         .catch((err) => {
-            console.error(err)
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
         })
 }
 
@@ -139,7 +145,9 @@ const postOrder = (req, res, next) => {
             res.redirect('/orders')
         })
         .catch((err) => {
-            console.error(err)
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
         })
 }
 

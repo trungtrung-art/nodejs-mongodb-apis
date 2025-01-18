@@ -17,7 +17,7 @@ route.get('/products', isAuth, controllerProduct.getProducts)
 route.post(
     '/add-product', [
         body('title').isString().isLength({ min: 3 }).trim(),
-        body('imageUrl').isURL(),
+
         body('price').isFloat(),
         body('des').isLength({ min: 5, max: 400 }).trim(),
     ],

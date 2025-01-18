@@ -23,8 +23,9 @@ const getAddProductPage = (req, res, next) => {
 const postAddProduct = (req, res, next) => {
     // Lấy dữ liệu từ request body
     const dataFromBody = req.body
-
-    // Chuyển đổi đối tượng thành chuỗi JSON và parse lại thành đối tượng
+    const imageUrlFile = req.file
+    console.log('imageUrl is ', imageUrlFile)
+        // Chuyển đổi đối tượng thành chuỗi JSON và parse lại thành đối tượng
     const parsedData = JSON.parse(JSON.stringify(dataFromBody))
 
     const errors = validationResult(req)
@@ -42,6 +43,7 @@ const postAddProduct = (req, res, next) => {
             layout: 'main-layout',
             product: {
                 ...parsedData,
+                imageUrl: imageUrlFile,
             },
             isAuthenticated: req.session.isLoggedIn,
             errorMessage: errors.array()[0].msg,
@@ -50,11 +52,12 @@ const postAddProduct = (req, res, next) => {
     }
 
     const { title, imageUrl, des, price } = parsedData
+
     const product = new Product({
         title: title,
         price: price,
         description: des,
-        imageUrl: imageUrl,
+        imageUrl: imageUrlFile,
         userId: req.user._id,
     })
     product
@@ -62,7 +65,11 @@ const postAddProduct = (req, res, next) => {
         .then((result) => {
             res.redirect('/')
         })
-        .catch((err) => console.error(err))
+        .catch((err) => {
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
+        })
 }
 
 const postEditProduct = (req, res, next) => {
@@ -116,7 +123,9 @@ const postEditProduct = (req, res, next) => {
             })
         })
         .catch((err) => {
-            console.error(err)
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
         })
 }
 
@@ -148,7 +157,9 @@ const getEditProductPage = (req, res, next) => {
             })
         })
         .catch((err) => {
-            console.error(err)
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
         })
 }
 
@@ -165,7 +176,9 @@ const getProducts = (req, res, next) => {
             })
         })
         .catch((err) => {
-            console.error(err)
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
         })
 }
 
@@ -177,7 +190,9 @@ const postDeleteProduct = (req, res, next) => {
             res.redirect('/admin/products')
         })
         .catch((err) => {
-            console.error(err)
+            const error = new Error(err)
+            error.httpStatusCode = 500
+            return next(error)
         })
 }
 
