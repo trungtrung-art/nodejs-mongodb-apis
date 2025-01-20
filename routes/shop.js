@@ -16,4 +16,6 @@ route.get('/orders', isAuth, controllerShop.getOrders)
 route.post('/delete-cart-item', isAuth, controllerShop.postDeleteCart)
 route.post('/create-order', isAuth, controllerShop.postOrder)
 
+route.get('/orders/:orderId', isAuth, controllerShop.getInvoice)
+
 module.exports = route

@@ -2,6 +2,7 @@ const mongodb = require('mongodb')
     // CONTROLLER OF PRODUCT
 const Product = require('../models/product')
 const { validationResult } = require('express-validator')
+const { deleteFile } = require('../utils/file')
 
 const getAddProductPage = (req, res, next) => {
     res.render('admin/edit-product', {
@@ -25,7 +26,27 @@ const postAddProduct = (req, res, next) => {
     const dataFromBody = req.body
     const imageUrlFile = req.file
     console.log('imageUrl is ', imageUrlFile)
-        // Chuyển đổi đối tượng thành chuỗi JSON và parse lại thành đối tượng
+    if (!imageUrlFile) {
+        return res.status(422).render('admin/edit-product', {
+            pageTitle: 'Add product',
+            path: '/admin/add-product',
+            editing: false,
+            formCSS: true,
+            productCSS: true,
+            activeProduct: true,
+            activeShop: false,
+            hasError: true,
+            layout: 'main-layout',
+            product: {
+                ...parsedData,
+                imageUrl: null,
+            },
+            isAuthenticated: req.session.isLoggedIn,
+            errorMessage: 'Attached file is not an image',
+            validationErrors: [],
+        })
+    }
+    // Chuyển đổi đối tượng thành chuỗi JSON và parse lại thành đối tượng
     const parsedData = JSON.parse(JSON.stringify(dataFromBody))
 
     const errors = validationResult(req)
@@ -43,7 +64,7 @@ const postAddProduct = (req, res, next) => {
             layout: 'main-layout',
             product: {
                 ...parsedData,
-                imageUrl: imageUrlFile,
+                imageUrl: imageUrlFile.path,
             },
             isAuthenticated: req.session.isLoggedIn,
             errorMessage: errors.array()[0].msg,
@@ -57,7 +78,7 @@ const postAddProduct = (req, res, next) => {
         title: title,
         price: price,
         description: des,
-        imageUrl: imageUrlFile,
+        imageUrl: imageUrlFile.path,
         userId: req.user._id,
     })
     product
@@ -74,7 +95,7 @@ const postAddProduct = (req, res, next) => {
 
 const postEditProduct = (req, res, next) => {
     const updatedTitle = req.body.title
-    const updatedImageUrl = req.body.imageUrl
+    const image = req.file
     const updatedPrice = req.body.price
     const updatedDes = req.body.des
     const prodId = req.body.productId
@@ -94,7 +115,7 @@ const postEditProduct = (req, res, next) => {
             layout: 'main-layout',
             product: {
                 title: updatedTitle,
-                imageUrl: updatedImageUrl,
+
                 price: updatedPrice,
                 des: updatedDes,
                 _id: prodId,
@@ -113,10 +134,14 @@ const postEditProduct = (req, res, next) => {
                 return res.redirect('/')
             }
             product.title = updatedTitle
-            product.imageUrl = updatedImageUrl
+
             product.description = updatedDes
             product.price = updatedPrice
             product._id = prodId
+            if (image) {
+                deleteFile(product.imageUrl)
+                product.imageUrl = image.path
+            }
             return product.save().then((result) => {
                 console.log('UPDATED PRODUCT')
                 res.redirect('/admin/products')
@@ -184,7 +209,15 @@ const getProducts = (req, res, next) => {
 
 const postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId
-    Product.deleteOne({ _id: prodId, userId: req.user._id })
+
+    Product.findById(prodId)
+        .then((product) => {
+            if (!product) {
+                return next(new Error('Product not found.'))
+            }
+            deleteFile(product.imageUrl)
+            return Product.deleteOne({ _id: prodId, userId: req.user._id })
+        })
         .then((result) => {
             console.log('REMOVED PRODUCT')
             res.redirect('/admin/products')

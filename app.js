@@ -44,6 +44,18 @@ const fileStorage = multer.diskStorage({
     },
 })
 
+const fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === 'image/png' ||
+        file.mimetype === 'image/jpg' ||
+        file.mimetype === 'image/jpeg'
+    ) {
+        cb(null, true)
+    } else {
+        cb(null, false)
+    }
+}
+
 // app.engine(
 //   "hbs",
 //   expressHbs({
@@ -57,9 +69,12 @@ app.set('view engine', 'ejs')
 app.set('views', 'views')
 
 app.use(bodyParser.urlencoded({ extended: false }))
-app.use(multer({ storage: fileStorage }).single('image'))
+app.use(
+        multer({ storage: fileStorage, fileFilter: fileFilter }).single('image'),
+    )
     // expressjs là môi trường của nhà phát triển nó sẽ không cho phép người dùng truy cập vào các file trừ khi có sự cho phép ở đây chúng ta sẽ dùng static file của express
 app.use(express.static(path.join(rootDir, 'public')))
+app.use('/images', express.static(path.join(rootDir, 'images')))
 app.use(
     session({
         secret: 'my secret',
