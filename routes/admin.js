@@ -42,6 +42,6 @@ route.post(
     controllerProduct.postEditProduct,
 )
 
-route.post('/delete-product', isAuth, controllerProduct.postDeleteProduct)
+route.delete('/product/:productId', isAuth, controllerProduct.deleteProduct)
 
 module.exports = route

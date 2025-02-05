@@ -12,7 +12,7 @@ route.get('/products/:productId', controllerShop.getProduct)
 route.get('/cart', isAuth, controllerShop.getCart)
 route.post('/cart', isAuth, controllerShop.postCart)
 route.get('/orders', isAuth, controllerShop.getOrders)
-    // // route.get("/checkout", controllerShop.getCheckout);
+route.get('/checkout', isAuth, controllerShop.getCheckout)
 route.post('/delete-cart-item', isAuth, controllerShop.postDeleteCart)
 route.post('/create-order', isAuth, controllerShop.postOrder)
 

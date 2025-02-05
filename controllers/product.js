@@ -207,8 +207,8 @@ const getProducts = (req, res, next) => {
         })
 }
 
-const postDeleteProduct = (req, res, next) => {
-    const prodId = req.body.productId
+const deleteProduct = (req, res, next) => {
+    const prodId = req.params.productId
 
     Product.findById(prodId)
         .then((product) => {
@@ -220,12 +220,10 @@ const postDeleteProduct = (req, res, next) => {
         })
         .then((result) => {
             console.log('REMOVED PRODUCT')
-            res.redirect('/admin/products')
+            res.status(200).json({ message: 'Success!' })
         })
         .catch((err) => {
-            const error = new Error(err)
-            error.httpStatusCode = 500
-            return next(error)
+            res.status(500).json({ message: 'Deleting product failed.' })
         })
 }
 
@@ -235,5 +233,5 @@ module.exports = {
     getProducts,
     getEditProductPage,
     postEditProduct,
-    postDeleteProduct,
+    deleteProduct,
 }
